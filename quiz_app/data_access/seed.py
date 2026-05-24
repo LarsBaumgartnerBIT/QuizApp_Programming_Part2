@@ -1,13 +1,15 @@
-from __future__ import annotations
 from sqlmodel import Session
+
 from ..domain.models import Question
+
+
 class QuestionSeeder:
     def seed(self, session: Session) -> None:
         questions = [
             Question(
                 text="What is Python?",
                 category="Python Basics",
-                options=["A type of snake","A programming language","An operating system","A computer game"],
+                options=["A type of snake", "A programming language", "An operating system", "A computer game"],
                 correct_index=1,
             ),
             Question(
@@ -59,5 +61,5 @@ class QuestionSeeder:
                 correct_index=1,
             ),
         ]
-        for question in questions:
-            session.add(question)
+        for q in questions:
+            session.add(q)
