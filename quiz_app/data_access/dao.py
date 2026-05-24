@@ -26,6 +26,24 @@ class QuestionDAO(BaseDAO):
         with self.session() as session:
             return session.get(Question, question_id)
 
+    def create(self, question: Question) -> Question:
+        # Neue Frage anlegen
+        with self.session() as session:
+            session.add(question)
+            session.commit()
+            session.refresh(question)
+        return question
+
+    def delete(self, question_id: int) -> bool:
+        # Frage anhand der ID löschen
+        with self.session() as session:
+            question = session.get(Question, question_id)
+            if question is None:
+                return False
+            session.delete(question)
+            session.commit()
+            return True
+
 
 class AttemptDAO(BaseDAO):
     def create(self, attempt: Attempt) -> Attempt:
