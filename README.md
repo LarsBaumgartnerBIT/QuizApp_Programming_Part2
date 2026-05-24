@@ -107,25 +107,53 @@ QuizApp solves this by offering a small, self-contained web app where players ca
 
 ## 🏛️ Architecture
 
-To do Noel
+![UML Class Diagram](docs/uml_class_architecture.png)
+
+### Layers
+- **UI** – NiceGUI pages and controllers ([`quiz_app/ui/`](quiz_app/ui/))
+- **Application logic** – services for grading, certificates, attempts and questions ([`quiz_app/services/`](quiz_app/services/))
+- **Persistence** – SQLite + SQLModel + DAOs ([`quiz_app/data_access/`](quiz_app/data_access/))
+- **Domain** – pure ORM models with built-in validation ([`quiz_app/domain/models.py`](quiz_app/domain/models.py))
+
+### Design Decisions
+- **MVC-inspired separation:** views (NiceGUI pages) talk only to controllers; controllers orchestrate services; services depend on DAOs; DAOs depend on the ORM. No UI code touches the database directly.
+- **Composition root:** the `QuizApp` class in [`application.py`](quiz_app/application.py) is the single place where the database, DAOs, services, controllers and UI are wired together.
+- **Stateless services:** services hold no per-request state, which makes them trivial to test with injected fakes or in-memory databases.
+
+### Design Patterns Used
+- **Layered MVC variant** – chosen because the application has a GUI, user interactions, business objects, and database access; a clean separation between them is essential.
+- **Facade pattern** – the `Database` class hides engine creation, schema setup, and one-time seeding behind a small interface so callers do not need to know about SQLAlchemy details.
+- **Data Access Object (DAO)** – `QuestionDAO` and `AttemptDAO` encapsulate every SQL/ORM access per entity, keeping services free of session handling.
+- **Composition root** – `QuizApp.__init__` / `_build_pages` is the single wiring point for all dependencies.
 
 ---
 
 ## 🗄️ Database and ORM
 
-To do Noel
+![ER Diagram](docs/er_diagram.png)
+
+The application uses **SQLModel** (built on SQLAlchemy) to map domain objects to a SQLite database. On first launch the schema is created automatically and, if the question table is empty, a default set of nine "Python Basics" questions is seeded.
+
+### Entities
+- `Question` – text, category, options, correct-answer index
+- `Attempt` – player name, timestamp, totals, score and grade
+- `Answer` – the selected option per question for a given attempt
+
+### Relationships
+- One `Attempt` → many `Answer`
+- Each `Answer` references exactly one `Question`
 
 ---
 
 ## ✅ Project Requirements
 
-To do Noel
+to do Lars
 
 ---
 
 ## ⚙️ Implementation
 
-To do Lars
+to do Lars
 
 ---
 
@@ -144,6 +172,8 @@ to do Lars
 ## 🧪 Testing
 
 to do Lars
+
+---
 
 ## 👥 Team & Contributions
 
