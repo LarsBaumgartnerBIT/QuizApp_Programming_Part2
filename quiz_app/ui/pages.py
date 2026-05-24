@@ -31,8 +31,6 @@ class Pages:
                     "text-5xl font-bold text-center bg-gradient-to-r from-blue-600 to-purple-600 "
                     "bg-clip-text text-transparent"
                 )
-                    "text-xl text-gray-600 text-center mb-4"
-                )
 
                 with ui.column().classes("w-full max-w-2xl gap-6"):
                     # name input
