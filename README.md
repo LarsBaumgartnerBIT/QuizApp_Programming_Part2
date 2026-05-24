@@ -313,7 +313,7 @@ Each test below is described using the standard 9-field template.
 - **Expected result:** `num_correct = 4`, `score_percent = 100.0`, `grade = 6.0`.
 - **Actual result:** Matches expected.
 - **Status:** Pass
-- **Comments:** Anchors the upper boundary of the grading scale. Implemented in `test_unit.py::test_grading_all_correct_returns_grade_six`.
+- **Comments:** 
 
 #### TC_002 — Grading: all answers wrong
 - **Description:** Verify that `GradingService.evaluate` returns the minimum grade when every answer is wrong.
@@ -323,7 +323,7 @@ Each test below is described using the standard 9-field template.
 - **Expected result:** `num_correct = 0`, `score_percent = 0.0`, `grade = 1.0`.
 - **Actual result:** Matches expected.
 - **Status:** Pass
-- **Comments:** Anchors the lower boundary of the grading scale. Implemented in `test_unit.py::test_grading_all_wrong_returns_grade_one`.
+- **Comments:** 
 
 #### TC_003 — Grading: partial correctness (parametrised)
 - **Description:** Verify the linear mapping between fraction-correct and grade for several mixed cases.
@@ -337,7 +337,7 @@ Each test below is described using the standard 9-field template.
 - **Expected result:** Each parameter set returns the exact expected triple.
 - **Actual result:** All 4 sub-cases match expected.
 - **Status:** Pass
-- **Comments:** Covers the proportional grading formula across the whole range. Implemented in `test_unit.py::test_grading_partial_correct`.
+- **Comments:** 
 
 #### TC_004 — Grading: empty input
 - **Description:** Verify that grading an empty answer list does not raise and returns the minimum grade.
@@ -347,7 +347,7 @@ Each test below is described using the standard 9-field template.
 - **Expected result:** `num_correct = 0`, `score_percent = 0.0`, `grade = service.min_grade` (= 1.0).
 - **Actual result:** Matches expected.
 - **Status:** Pass
-- **Comments:** Defensive edge-case test against division-by-zero. Implemented in `test_unit.py::test_grading_empty_input_returns_minimum_grade`.
+- **Comments:** 
 
 #### TC_005 — Grading: pass/fail boundary at 4.0 (parametrised)
 - **Description:** Verify that `is_passing` treats 4.0 as the inclusive lower bound for passing.
@@ -357,7 +357,7 @@ Each test below is described using the standard 9-field template.
 - **Expected result:** Boundary is `grade >= 4.0`; anything below fails, anything at or above passes.
 - **Actual result:** All 5 sub-cases match expected.
 - **Status:** Pass
-- **Comments:** Pins the pass/fail threshold so it cannot regress. Implemented in `test_unit.py::test_grading_is_passing_boundary`.
+- **Comments:** 
 
 #### TC_006 — Certificate: rejects unpersisted attempt
 - **Description:** Verify that `CertificateService.generate_pdf` refuses to render a certificate for an `Attempt` that has not been saved yet (no DB id).
@@ -367,7 +367,7 @@ Each test below is described using the standard 9-field template.
 - **Expected result:** `ValueError` is raised; no PDF is written.
 - **Actual result:** `ValueError` raised as expected.
 - **Status:** Pass
-- **Comments:** Protects against generating a file whose name (`certificate_<id>.pdf`) is undefined. Implemented in `test_unit.py::test_certificate_service_requires_persisted_attempt`.
+- **Comments:** 
 
 #### TC_007 — Seeder writes the default questions
 - **Description:** Verify that the `QuestionSeeder` populates an empty database with the expected default set.
@@ -380,7 +380,7 @@ Each test below is described using the standard 9-field template.
 - **Expected result:** 9 questions inserted, all with category `"Python Basics"`, and the first one's text is `"What is Python?"`.
 - **Actual result:** Matches expected.
 - **Status:** Pass
-- **Comments:** Guards the contract the rest of the integration tests rely on. Implemented in `test_db.py::test_question_seeder_inserts_default_questions`.
+- **Comments:** 
 
 #### TC_008 — AttemptDAO persists attempt + answers
 - **Description:** Verify that creating an `Attempt` with nested `Answer` objects writes both the attempt and its answers to the database in one transaction.
@@ -393,7 +393,7 @@ Each test below is described using the standard 9-field template.
 - **Expected result:** Saved attempt has a non-`None` id; exactly 2 `Answer` rows are stored, and exactly 1 of them has `is_correct = True`.
 - **Actual result:** Matches expected.
 - **Status:** Pass
-- **Comments:** Verifies the parent/child cascade on insert. Implemented in `test_db.py::test_attempt_dao_create_persists_attempt_and_answers`.
+- **Comments:** 
 
 #### TC_009 — Empty-DB behaviour for AttemptDAO
 - **Description:** Verify that DAO read methods return empty/`None` results when no attempts exist, instead of crashing.
@@ -405,7 +405,7 @@ Each test below is described using the standard 9-field template.
 - **Expected result:** `list_recent()` returns `[]`; `get_with_items(1)` returns `None`.
 - **Actual result:** Matches expected.
 - **Status:** Pass
-- **Comments:** Defensive test for "first time the app is opened" state. Implemented in `test_db.py::test_attempt_dao_empty_db_returns_empty_results`.
+- **Comments:** 
 
 #### TC_010 — Integration: submit all-correct, attempt + certificate created
 - **Description:** End-to-end test that submitting a fully-correct quiz creates a persisted `Attempt` and writes a non-empty PDF certificate to disk.
@@ -418,7 +418,7 @@ Each test below is described using the standard 9-field template.
 - **Expected result:** `attempt.id` is set, `player_name = "Alice"`, `num_correct = 9`, `score_percent = 100.0`, `grade = 6.0`; PDF file exists, has `.pdf` suffix, and is non-empty.
 - **Actual result:** Matches expected.
 - **Status:** Pass
-- **Comments:** Happy-path end-to-end coverage of UI controller → service → DAO → certificate. Implemented in `test_integration.py::test_submit_all_correct_creates_attempt_and_certificate`.
+- **Comments:** 
 
 #### TC_011 — Integration: submit all-wrong, grade = 1.0, appears in recent
 - **Description:** Verify that an all-wrong submission grades to 1.0 and immediately shows up at the top of the "recent attempts" list.
@@ -431,7 +431,7 @@ Each test below is described using the standard 9-field template.
 - **Expected result:** `attempt.num_correct = 0`, `score_percent = 0.0`, `grade = 1.0`; the first entry of `list_recent()` is this new attempt and its `player_name` is `"Bob"`.
 - **Actual result:** Matches expected.
 - **Status:** Pass
-- **Comments:** Combines unhappy-path grading with the "recent attempts" admin query. Implemented in `test_integration.py::test_submit_all_wrong_grades_to_one_and_appears_in_recent`.
+- **Comments:** 
 
 #### TC_012 — Integration: multiple submits ordered newest-first
 - **Description:** Verify that `list_recent` returns attempts in descending date order across multiple submissions.
@@ -445,7 +445,7 @@ Each test below is described using the standard 9-field template.
 - **Expected result:** The first three IDs returned are `[attempt_3.id, attempt_2.id, attempt_1.id]`; `recent[0].grade == 6.0` and `recent[2].grade == 1.0`.
 - **Actual result:** Matches expected.
 - **Status:** Pass
-- **Comments:** Locks in the ordering contract that the admin page relies on. Implemented in `test_integration.py::test_multiple_submits_are_listed_newest_first`.
+- **Comments:** 
 
 ---
 
