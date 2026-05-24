@@ -130,6 +130,91 @@ class Pages:
                 ui.label("🔐 Admin Dashboard").classes("text-4xl font-bold mb-4 text-gray-900")
                 ui.link("← Back to Quiz", "/").classes("text-blue-700 mb-6 font-semibold")
 
+                # ---------------- Questions section ---------------- #
+                with ui.column().classes("w-full max-w-5xl gap-4 mb-8"):
+                    ui.label("📝 Questions").classes("text-3xl font-bold text-gray-900")
+
+                    # Add new question form
+                    with ui.card().classes("w-full p-6 shadow-lg bg-white").style(
+                        "border-radius: 12px; border: 1px solid #d1d5db;"
+                    ):
+                        ui.label("Add a new question").classes(
+                            "text-xl font-semibold mb-2 text-gray-900"
+                        )
+                        new_text = ui.input("Question text").classes("w-full").props("outlined")
+                        new_category = ui.input("Category", value="General").classes(
+                            "w-full"
+                        ).props("outlined")
+
+                        option_inputs = []
+                        with ui.column().classes("w-full gap-2 mt-2"):
+                            for letter in ("A", "B", "C", "D"):
+                                option_inputs.append(
+                                    ui.input(f"Option {letter}").classes("w-full").props("outlined")
+                                )
+
+                        ui.label("Correct answer").classes("text-sm text-gray-600 mt-2")
+                        correct_radio = ui.radio(
+                            {0: "A", 1: "B", 2: "C", 3: "D"}, value=0
+                        ).props("inline color=blue")
+
+                        def do_add() -> None:
+                            try:
+                                admin_controller.add_question(
+                                    text=new_text.value,
+                                    category=new_category.value,
+                                    options=[inp.value for inp in option_inputs],
+                                    correct_index=int(correct_radio.value),
+                                )
+                            except ValueError as ex:
+                                ui.notify(str(ex), type="warning")
+                                return
+                            ui.notify("Question added.", type="positive")
+                            ui.navigate.to("/admin")
+
+                        ui.button("Add Question", icon="add", on_click=do_add).props(
+                            "rounded"
+                        ).classes("mt-3 bg-blue-600")
+
+                    # Existing questions list
+                    questions = admin_controller.list_questions()
+                    if not questions:
+                        ui.label("No questions yet.").classes("text-lg text-gray-600")
+                    else:
+                        def do_delete(qid: int) -> None:
+                            try:
+                                admin_controller.delete_question(qid)
+                            except ValueError as ex:
+                                ui.notify(str(ex), type="warning")
+                                return
+                            ui.notify("Question deleted.", type="positive")
+                            ui.navigate.to("/admin")
+
+                        with ui.card().classes("w-full shadow-lg bg-white").style(
+                            "border-radius: 12px; border: 1px solid #d1d5db;"
+                        ):
+                            for question in questions:
+                                with ui.row().classes(
+                                    "w-full items-center justify-between p-3 border-b"
+                                ):
+                                    with ui.column().classes("gap-1"):
+                                        ui.label(f"#{question.id} — {question.text}").classes(
+                                            "text-base font-semibold text-gray-900"
+                                        )
+                                        correct_option = question.options[question.correct_index]
+                                        ui.label(
+                                            f"{question.category} · Correct: {correct_option}"
+                                        ).classes("text-sm text-gray-600")
+                                    ui.button(
+                                        "Delete", icon="delete",
+                                        on_click=lambda qid=question.id: do_delete(qid),
+                                    ).props("rounded color=red")
+
+                # ---------------- Attempts section ---------------- #
+                ui.label("📊 Attempts").classes(
+                    "text-3xl font-bold mb-3 text-gray-900"
+                )
+
                 with ui.column().classes("w-full max-w-5xl"):
                     attempts = admin_controller.list_attempts(limit=200)
                     if not attempts:

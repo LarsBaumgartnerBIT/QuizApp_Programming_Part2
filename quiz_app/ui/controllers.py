@@ -6,11 +6,48 @@ from ..services.question_service import QuestionService
 
 
 class AdminController:
-    def __init__(self, attempt_service: AttemptService) -> None:
+    def __init__(
+        self,
+        attempt_service: AttemptService,
+        question_service: QuestionService,
+    ) -> None:
         self.attempt_service = attempt_service
+        self.question_service = question_service
 
+    # --- attempts ----------------------------------------------------- #
     def list_attempts(self, limit: int = 200) -> List[Attempt]:
         return self.attempt_service.list_recent(limit=limit)
+
+    # --- question management ------------------------------------------ #
+    def list_questions(self) -> List[Question]:
+        return self.question_service.list_questions()
+
+    def add_question(
+        self,
+        text: str,
+        category: str,
+        options: List[str],
+        correct_index: int,
+    ) -> Question:
+        text = (text or "").strip()
+        category = (category or "").strip() or "General"
+        cleaned_options = [opt.strip() for opt in options if opt and opt.strip()]
+        if len(text) < 5:
+            raise ValueError("Question text must be at least 5 characters.")
+        if len(cleaned_options) < 2:
+            raise ValueError("Please provide at least two answer options.")
+        if correct_index < 0 or correct_index >= len(cleaned_options):
+            raise ValueError("Correct answer index is out of range.")
+        return self.question_service.create_question(
+            text=text,
+            category=category,
+            options=cleaned_options,
+            correct_index=correct_index,
+        )
+
+    def delete_question(self, question_id: int) -> None:
+        if not self.question_service.delete_question(question_id):
+            raise ValueError(f"Unknown question id: {question_id}")
 
 
 class QuizController:
