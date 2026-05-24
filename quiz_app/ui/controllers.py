@@ -7,8 +7,11 @@ from ..services.question_service import QuestionService
 class AdminController:
     def __init__(self, attempt_service: AttemptService) -> None:
         self.attempt_service = attempt_service
+
     def list_attempts(self, limit: int = 200) -> List[Attempt]:
+        """List the most recent quiz attempts."""
         return self.attempt_service.list_recent(limit=limit)
+
 
 class QuizController:
     def __init__(
@@ -16,6 +19,7 @@ class QuizController:
     ) -> None:
         self.question_service = question_service
         self.attempt_service = attempt_service
+        # Maps question id -> selected option index for the quiz in progress.
         self._answers: Dict[int, int] = {}
 
     def questions(self) -> List[Question]:
