@@ -1,11 +1,15 @@
 from __future__ import annotations
 from typing import List, Optional, Sequence, Tuple
-from ..domain.models import Answer, Attempt, Question
 from ..data_access.dao import AttemptDAO
+from ..domain.models import Answer, Attempt, Question
 from .certificate_service import CertificateService
 from .grading_service import GradingService
 
+
 class AttemptService:
+    # --------------------------------------------------------------------- #
+    # Construction
+    # --------------------------------------------------------------------- #
     def __init__(
         self,
         attempt_dao: AttemptDAO,
@@ -16,8 +20,13 @@ class AttemptService:
         self.certificate_service = certificate_service
         self.grading_service = grading_service
 
+    # --------------------------------------------------------------------- #
+    # Write operations
+    # --------------------------------------------------------------------- #
     def submit(
-        self, player_name: str, responses: Sequence[Tuple[Question, int]]
+        self,
+        player_name: str,
+        responses: Sequence[Tuple[Question, int]],
     ) -> Tuple[Attempt, str]:
         answers = [
             Answer(
@@ -43,8 +52,13 @@ class AttemptService:
         path = self.certificate_service.generate_pdf(loaded_attempt)
         return created_attempt, str(path)
 
+    # --------------------------------------------------------------------- #
+    # Read operations
+    # --------------------------------------------------------------------- #
     def list_recent(self, limit: int = 200) -> List[Attempt]:
+        """Return the most recent attempts (newest first)."""
         return self.attempt_dao.list_recent(limit=limit)
 
     def get_with_items(self, attempt_id: int) -> Optional[Attempt]:
+        """Return a single attempt with its answers eagerly loaded."""
         return self.attempt_dao.get_with_items(attempt_id)

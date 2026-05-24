@@ -6,13 +6,20 @@ from ..domain.models import Attempt
 
 
 class CertificateService:
+
+    # --------------------------------------------------------------------- #
+    # Construction
+    # --------------------------------------------------------------------- #
     def __init__(self, certificate_dir: str) -> None:
         self.certificate_dir = certificate_dir
 
+    # --------------------------------------------------------------------- #
+    # Public API
+    # --------------------------------------------------------------------- #
     def generate_pdf(self, attempt: Attempt) -> Path:
         if attempt.id is None:
             raise ValueError(
-                "Attempt must be persisted (needs an id) before certificate generation."
+                "Error"
             )
         out_dir = Path(self.certificate_dir)
         out_dir.mkdir(parents=True, exist_ok=True)
@@ -20,9 +27,11 @@ class CertificateService:
         c = canvas.Canvas(str(out_path), pagesize=A4)
         width, height = A4
         y = height - 50
+
         c.setFont("Helvetica-Bold", 16)
         c.drawString(50, y, "QuizRP - Result Certificate")
         y -= 25
+
         c.setFont("Helvetica", 10)
         created_str = attempt.created_at.isoformat(timespec="seconds")
         c.drawString(50, y, f"Attempt ID: {attempt.id}")
@@ -31,6 +40,7 @@ class CertificateService:
         y -= 15
         c.drawString(50, y, f"Date: {created_str}")
         y -= 25
+
         c.setFont("Helvetica-Bold", 11)
         c.drawString(50, y, "Answers")
         y -= 15
@@ -41,6 +51,7 @@ class CertificateService:
         y -= 12
         c.line(50, y, width - 50, y)
         y -= 15
+
         for index, answer in enumerate(attempt.answers, start=1):
             if y < 120:
                 c.showPage()
@@ -69,6 +80,7 @@ class CertificateService:
         y -= 16
         c.setFont("Helvetica-Bold", 11)
         c.drawRightString(width - 50, y, "PASSED" if attempt.grade >= 4.0 else "NOT PASSED")
+
         c.showPage()
         c.save()
         return out_path
