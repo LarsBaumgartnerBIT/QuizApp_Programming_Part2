@@ -92,6 +92,9 @@ class Pages:
                             ui.notify(str(ex), type="warning")
                             return
                         ui.notify(f"Grade: {attempt.grade}", type="positive")
+                        # auto-send the certificate to the player's browser
+                        download_name = f"quiz_certificate_{attempt.id}.pdf"
+                        ui.download(certificate_path, filename=download_name)
                         result_container.clear()
                         with result_container:
                             # green for pass, red for fail
@@ -111,10 +114,17 @@ class Pages:
                                 )
                                 status = "✅ PASSED" if attempt.grade >= 4.0 else "❌ NOT PASSED"
                                 ui.label(status).classes("text-2xl font-bold text-gray-900")
-                                ui.button(
-                                    "Try again", icon="refresh",
-                                    on_click=lambda: ui.navigate.to("/"),
-                                ).props("rounded").classes("mt-4 bg-blue-600")
+                                with ui.row().classes("gap-3 mt-4"):
+                                    ui.button(
+                                        "Download Certificate", icon="download",
+                                        on_click=lambda: ui.download(
+                                            certificate_path, filename=download_name
+                                        ),
+                                    ).props("rounded").classes("bg-green-600")
+                                    ui.button(
+                                        "Try again", icon="refresh",
+                                        on_click=lambda: ui.navigate.to("/"),
+                                    ).props("rounded").classes("bg-blue-600")
 
                     ui.button("Submit Quiz", icon="send", on_click=do_submit).props(
                         "size=lg rounded"
