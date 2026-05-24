@@ -8,6 +8,7 @@ dependencies = [
     "nicegui",
     "sqlmodel",
     "reportlab",
+    "tzdata; sys_platform == 'win32'",
 ]
 
 [tool.pytest.ini_options]
