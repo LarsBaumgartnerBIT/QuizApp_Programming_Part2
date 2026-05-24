@@ -16,3 +16,24 @@ class QuestionService:
 
     def get_by_id(self, question_id: int) -> Optional[Question]:
         return self.question_dao.get_by_id(question_id)
+
+    # --------------------------------------------------------------------- #
+    # Write operations
+    # --------------------------------------------------------------------- #
+    def create_question(
+        self,
+        text: str,
+        category: str,
+        options: List[str],
+        correct_index: int,
+    ) -> Question:
+        question = Question(
+            text=text,
+            category=category,
+            options=options,
+            correct_index=correct_index,
+        )
+        return self.question_dao.create(question)
+
+    def delete_question(self, question_id: int) -> bool:
+        return self.question_dao.delete(question_id)

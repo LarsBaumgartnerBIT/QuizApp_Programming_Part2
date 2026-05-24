@@ -39,7 +39,7 @@ class QuizApp:
         )
 
         quiz_controller = QuizController(question_service, attempt_service)
-        admin_controller = AdminController(attempt_service)
+        admin_controller = AdminController(attempt_service, question_service)
         return Pages(quiz_controller, admin_controller)
 
     def run(self, *, host: str = "127.0.0.1", port: int = 8080) -> None:
